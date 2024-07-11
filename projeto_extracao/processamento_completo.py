@@ -5,6 +5,6 @@ import pdf_para_imagem_1 # cimport pdf_para_imagem_1, limiarizaçao_2, imagem_pa
 # def teste():
 #     messagebox.showinfo("Status do Processamento", "Processamento Finalizado com Sucesso!")
 
-def processamento(pasta_entrada, pasta_saida):
+def processamento():
     # pdf_para_imagem_1.pdf_para_imagens(pasta_entrada, pasta_saida)
     messagebox.showinfo("DEU CERTO!", "DEU CERTO!")

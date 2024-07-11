@@ -2,6 +2,7 @@ from pdf2image import convert_from_path
 import os
 from pathlib import Path
 import pytesseract
+from tkinter import messagebox
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
@@ -24,10 +25,10 @@ def pdf_para_imagens(pasta_entrada, pasta_saida):
                 
                 # Caso a imagem salva estiver em branco será removida
                 if verificar_pdf_em_branco(caminho_imagem_saida):
-                    print(f'Página salva como {caminho_imagem_saida}')
+                    messagebox.showinfo("Status de Processamento", f'Página salva como {caminho_imagem_saida}')
                 else:
                     os.remove(caminho_imagem_saida)
-                    print('Página do PDF está em branco!')
+                    messagebox.showwarning("Status de Processamento", 'Página do PDF está em branco!')
 
 
 def verificar_pdf_em_branco(caminho_pdf_entrada):

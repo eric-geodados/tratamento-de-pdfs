@@ -2,29 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog, messagebox
 import tkinter.font as tkFont
-import processamento_completo as pc
+import pdf_para_imagem_1, limiarizaçao_2
 
 class Interface:
 
     cor = "#13191C"
     cor_botoes = "#00ABD1"
     fonte = "Segoe UI"
-
-    # Função para abrir os seletores de pasta
-    def abrir_pasta_entrada(self):
-        caminho = filedialog.askdirectory()
-        if caminho:
-            self.pasta_entrada.set(caminho)
-
-    def abrir_pasta_saida(self):
-        caminho = filedialog.askdirectory()
-        if caminho:
-            self.pasta_saida.set(caminho)
-            
-    
-    # Função para o botão de enviar
-    def teste(self):
-        messagebox.showinfo("Status do Processamento", "Teste")
 
     # Configurações da janela principal
     def iniciar_interface(self):
@@ -58,19 +42,20 @@ class Interface:
 
         ttk.Label(frame, text="PROCESSADOR DE PDFS", font=fonte_titulos, background=self.cor, foreground="white").grid(column=0, row=1, padx=10, pady=10, columnspan=4)
 
-        # Rótulos para mostrar os caminhos das pastas
+        # Labels para mostrar os caminho da pasta de entrada
         ttk.Label(frame, text="Caminho de entrada:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=2, padx=10, pady=10, sticky="e")
-        ttk.Label(frame, textvariable=self.pasta_entrada, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=2, padx=10, pady=10)
-
-        ttk.Label(frame, text="Caminho de saída:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=3, padx=10, pady=10, sticky="e")
-        ttk.Label(frame, textvariable=self.pasta_saida, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=3, padx=10, pady=10)
-
         # Botões para abrir pastas
         ttk.Button(frame, text="Selecionar Pasta", command=self.abrir_pasta_entrada).grid(column=2, row=2, pady=10)
+        ttk.Label(frame, textvariable=self.pasta_entrada, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=2, padx=10, pady=10)
+        
+        # Labels para mostrar os caminho da pasta de saída
+        ttk.Label(frame, text="Caminho de saída:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=3, padx=10, pady=10, sticky="e")
+        ttk.Label(frame, textvariable=self.pasta_saida, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=3, padx=10, pady=10)
+        # Botões para abrir pastas
         ttk.Button(frame, text="Selecionar Pasta", command=self.abrir_pasta_saida).grid(column=2, row=3, pady=10)
 
         # Botão Processar
-        self.botao_processar = ttk.Button(frame, text="Processar", command=self.teste, padding=10)
+        self.botao_processar = ttk.Button(frame, text="Processar", command=self.processamento, padding=10)
         self.botao_processar.grid(column=0, row=4, sticky="ew", columnspan=4, pady=20)
         self.botao_processar.config(state=tk.DISABLED)
 
@@ -79,13 +64,32 @@ class Interface:
 
 
         janela.mainloop()
+      
         
+    # Função para abrir os seletores de pasta
+    def abrir_pasta_entrada(self):
+        caminho = filedialog.askdirectory()
+        if caminho:
+            self.pasta_entrada.set(caminho)
+
+
+    def abrir_pasta_saida(self):
+        caminho = filedialog.askdirectory()
+        if caminho:
+            self.pasta_saida.set(caminho)
+      
+            
     # Função para desabilitar botão até selecionar pastas
     def desabilitador_botao(self, *args):
         if self.pasta_entrada.get().strip() and self.pasta_saida.get().strip():
             self.botao_processar.config(state=tk.NORMAL)
         else:
             self.botao_processar.config(state=tk.DISABLED)
+    
+    
+    def processamento(self):
+        pdf_para_imagem_1.pdf_para_imagens(self.pasta_entrada.get(), self.pasta_saida.get())
+        limiarizaçao_2.gradually_increase_brightness(self.pasta_saida.get(), self.pasta_entrada.get())
         
 
 interface = Interface()
