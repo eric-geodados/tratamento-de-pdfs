@@ -165,10 +165,12 @@ cython_debug/
 
 teste.py
 metadados.py
-.1_pdfImagem/
-.2_limiarizacao/
-.3_imagemPdfOCR/
-.4_extracaoTexto/
+1_pdfImagem/
+2_limiarizacao/
+3_imagemPdfOCR/
+4_extracaoTexto/
 
-.semTratamento/
-.comTratamento/
+semTratamento/
+comTratamento/
+
+.gitignore

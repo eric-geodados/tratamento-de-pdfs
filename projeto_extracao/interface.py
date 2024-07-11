@@ -5,6 +5,7 @@ import tkinter.font as tkFont
 import processamento_completo as pc
 
 class Interface:
+
     cor = "#13191C"
     cor_botoes = "#00ABD1"
     fonte = "Segoe UI"
@@ -20,13 +21,7 @@ class Interface:
         if caminho:
             self.pasta_saida.set(caminho)
             
-    # Função para desabilitar botão até selecionar pastas
-    def desabilitador_botao(self, *args):
-        if self.pasta_entrada.get().strip():
-            self.botao_processar.config(state=tk.NORMAL)
-        else:
-            self.botao_processar.config(state=tk.DISABLED)
-        
+    
     # Função para o botão de enviar
     def teste(self):
         messagebox.showinfo("Status do Processamento", "Teste")
@@ -59,10 +54,7 @@ class Interface:
         self.pasta_entrada.trace("w", self.desabilitador_botao)  # Monitora alterações no StringVar
         self.pasta_saida = tk.StringVar()
         self.pasta_saida.trace("w", self.desabilitador_botao)  # Monitora alterações no StringVar
-        
-        # Cria um Entry e associa ao StringVar
-        entry = tk.Entry(janela, textvariable=self.pasta_entrada)
-        entry.pack()
+    
 
         ttk.Label(frame, text="PROCESSADOR DE PDFS", font=fonte_titulos, background=self.cor, foreground="white").grid(column=0, row=1, padx=10, pady=10, columnspan=4)
 
@@ -78,7 +70,8 @@ class Interface:
         ttk.Button(frame, text="Selecionar Pasta", command=self.abrir_pasta_saida).grid(column=2, row=3, pady=10)
 
         # Botão Processar
-        self.botao_processar = ttk.Button(frame, text="Processar", command=self.teste, padding=10).grid(column=0, row=4, sticky="ew", columnspan=4, pady=20)
+        self.botao_processar = ttk.Button(frame, text="Processar", command=self.teste, padding=10)
+        self.botao_processar.grid(column=0, row=4, sticky="ew", columnspan=4, pady=20)
         self.botao_processar.config(state=tk.DISABLED)
 
         # Créditos ao Desenvolvedor
@@ -86,9 +79,14 @@ class Interface:
 
 
         janela.mainloop()
+        
+    # Função para desabilitar botão até selecionar pastas
+    def desabilitador_botao(self, *args):
+        if self.pasta_entrada.get().strip() and self.pasta_saida.get().strip():
+            self.botao_processar.config(state=tk.NORMAL)
+        else:
+            self.botao_processar.config(state=tk.DISABLED)
+        
 
 interface = Interface()
 interface.iniciar_interface()
-
-# class Sistema:
-#     interface.iniciar_interface()
