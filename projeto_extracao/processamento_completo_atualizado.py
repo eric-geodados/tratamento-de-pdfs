@@ -18,8 +18,7 @@ class Processamento:
         
         # Executar as funções da classe
         self.pdf_para_imagens()
-        # self.aumentar_gradual_brilho()
-        # self.ajustar_brilho(alpha=1.5, beta=30)
+        self.aumentar_gradual_brilho()
 
 
     # PROCESSO 1
@@ -49,7 +48,7 @@ class Processamento:
                     
                 # logging.info('PROCESSAMENTO FINALIZADO COM SUCESSO!')
 
-        messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
+        
 
     def verificar_pdf_em_branco(self):
         str_resultado = pytesseract.image_to_string(self.caminho_imagem_saida, lang='por')
@@ -58,7 +57,17 @@ class Processamento:
         return True
 
     
-    # # PROCESSO 2
+    # PROCESSO 2
+    # Função para ajustar o brilho da imagem
+    def ajustar_brilho(self, imagem, alpha=1.5, beta=30):
+            imagem_array = np.array(imagem)
+
+            imagem_array_ajustada = cv2.convertScaleAbs(imagem_array, alpha=alpha, beta=beta)
+
+            imagem_ajustada = Image.fromarray(imagem_array_ajustada)
+
+            return imagem_ajustada
+
     # Ajustar o brilho e borrões da imagem
     def aumentar_gradual_brilho(self):
         if not os.path.exists(self.pasta_saida):
@@ -66,24 +75,20 @@ class Processamento:
 
         if not os.path.exists(self.pasta_entrada):
             os.makedirs(self.pasta_entrada)
-        for nome_doc in os.listdir(self):
+
+        for nome_doc in os.listdir(self.pasta_saida):
             if nome_doc.endswith(".png"):
                 caminho_imagem = os.path.join(self.pasta_saida, nome_doc)
 
-                self.imagem = Image.open(caminho_imagem)
+                imagem = Image.open(caminho_imagem)
 
-                imagem_ajustada = self.ajustar_brilho(self)
+                imagem_ajustada = self.ajustar_brilho(imagem, alpha=1.1, beta=20)
 
                 caminho_saida = os.path.join(self.pasta_entrada, nome_doc)
                 imagem_ajustada.save(caminho_saida)
-                self.imagem.close()
+                imagem.close()
                 imagem_ajustada.close()
+                
+                logging.info(f'Qualidade da imagem {nome_doc} alterada com sucesso!')
 
-    def ajustar_brilho(self, alpha=1.5, beta=30):
-        imagem_array = np.array(self.imagem)
-
-        imagem_array_ajustada = cv2.convertScaleAbs(imagem_array, alpha=alpha, beta=beta)
-
-        imagem_ajustada = Image.fromarray(imagem_array_ajustada)
-
-        return imagem_ajustada
+        messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
