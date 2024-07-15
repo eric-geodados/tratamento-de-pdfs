@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 import tkinter.font as tkFont
-import pdf_para_imagem_1
+import pdf_para_imagem_1, projeto_extracao.processamento_completo_atualizado as processamento_completo_atualizado
 import utils
 from utils import logging
 
@@ -98,8 +98,8 @@ class Interface:
 
     # Função para executar os processos já elaborados
     def processamento(self):
-        pdf_para_imagem_1.pdf_para_imagens(self.pasta_entrada.get(), self.pasta_saida.get())
-
+        # pdf_para_imagem_1.pdf_para_imagens(self.pasta_entrada.get(), self.pasta_saida.get())
+        processamento_completo_atualizado.Processamento(self.pasta_entrada.get(), self.pasta_saida.get())
 
 interface = Interface()
 interface.iniciar_interface()

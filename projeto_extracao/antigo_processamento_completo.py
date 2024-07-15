@@ -18,15 +18,15 @@ class Processamento:
 
         for doc in os.listdir(pasta_entrada): 
             if doc.endswith(".pdf"):
-                caminho_pdf_entrada = os.path.join(pasta_entrada, doc)
+                self.caminho_pdf_entrada = os.path.join(pasta_entrada, doc)
                 
                 # Converter cada página do PDF em uma imagem
-                imagens = convert_from_path(caminho_pdf_entrada, poppler_path=r"C:\Program Files\poppler-24.02.0\Library\bin")
+                imagens = convert_from_path(self.caminho_pdf_entrada, poppler_path=r"C:\Program Files\poppler-24.02.0\Library\bin")
                 
                 # Salvar cada imagem em arquivos separados
                 for i, imagem in enumerate(imagens):
                     # Rodar a função que retorna se a imagem é branca ou não
-                    caminho_imagem_saida = os.path.join(pasta_saida, f'{i+1}_{Path(caminho_pdf_entrada).stem}.png')
+                    caminho_imagem_saida = os.path.join(pasta_saida, f'{i+1}_{Path(self.caminho_pdf_entrada).stem}.png')
                     imagem.save(caminho_imagem_saida, 'PNG')
                     
                     # Caso a imagem salva estiver em branco será removida
@@ -41,8 +41,8 @@ class Processamento:
         messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
 
 
-    def verificar_pdf_em_branco(self, caminho_pdf_entrada):
-        str_resultado = pytesseract.image_to_string(caminho_pdf_entrada, lang='por')
+    def verificar_pdf_em_branco(self):
+        str_resultado = pytesseract.image_to_string(self.caminho_pdf_entrada, lang='por')
 
         if str_resultado == "":
             return False
@@ -59,7 +59,7 @@ class Processamento:
         return imagem_ajustada
 
     # Ajustar o brilho e borrões da imagem
-    def aumentar_gradual_brilho(self, input_folder, output_folder):
+    def aumentar_gradual_brilho(self, pasta_saida, pasta_entrada):
         # if not os.path.exists(input_folder):
         #     os.makedirs(input_folder)
 
@@ -67,13 +67,13 @@ class Processamento:
         #     os.makedirs(output_folder)
         for nome_doc in os.listdir(self):
             if nome_doc.endswith(".png"):
-                caminho_imagem = os.path.join(input_folder, nome_doc)
+                caminho_imagem = os.path.join(pasta_saida, nome_doc)
 
                 imagem = Image.open(caminho_imagem)
 
                 imagem_ajustada = self.ajustar_brilho(imagem, alpha=1.1, beta=20)
 
-                caminho_saida = os.path.join(output_folder, nome_doc)
+                caminho_saida = os.path.join(pasta_entrada, nome_doc)
                 imagem_ajustada.save(caminho_saida)
                 imagem.close()
                 imagem_ajustada.close()
