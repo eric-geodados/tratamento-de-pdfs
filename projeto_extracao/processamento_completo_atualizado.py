@@ -19,6 +19,7 @@ class Processamento:
         # Executar as funções da classe
         self.pdf_para_imagens()
         self.aumentar_gradual_brilho()
+        self.converter_imagens_para_pdf()
 
 
     # PROCESSO 1
@@ -91,4 +92,24 @@ class Processamento:
                 
                 logging.info(f'Qualidade da imagem {nome_doc} alterada com sucesso!')
 
-        messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
+
+    # PROCESSO 3
+    def converter_imagens_para_pdf(self):
+        if not os.path.exists(self.pasta_saida):
+            os.makedirs(self.pasta_saida)
+
+        for nome_arquivo in os.listdir(self.pasta_entrada):
+            if nome_arquivo.endswith(".png"):
+                caminho_imagem = os.path.join(self.pasta_entrada, nome_arquivo)
+                nome_sem_extensao = Path(nome_arquivo).stem
+                
+                pdf = pytesseract.image_to_pdf_or_hocr(caminho_imagem, extension='pdf')
+                
+                with open(os.path.join(self.pasta_saida, (f'{nome_sem_extensao}.pdf')), 'w+b') as f:
+                    f.write(pdf)
+
+                logging.info(f'Conversão de {nome_arquivo} para PDF feita com sucesso!')
+                
+                os.remove(caminho_imagem)
+
+    messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
