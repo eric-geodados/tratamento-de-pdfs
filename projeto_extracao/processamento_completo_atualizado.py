@@ -20,7 +20,7 @@ class Processamento:
         self.pdf_para_imagens()
         self.aumentar_gradual_brilho()
         self.converter_imagens_para_pdf()
-
+        self.apagar_arquivos_indesejados()
 
     # PROCESSO 1
     def pdf_para_imagens(self):
@@ -110,6 +110,14 @@ class Processamento:
 
                 logging.info(f'Conversão de {nome_arquivo} para PDF feita com sucesso!')
                 
+                # Limpar os arquivos 
                 os.remove(caminho_imagem)
+    
+    def apagar_arquivos_indesejados(self):
+        for nome_arquivo in os.listdir(self.pasta_saida):
+            if nome_arquivo.endswith(".png"):
+                caminho_arquivo = os.path.join(self.pasta_saida, nome_arquivo)
+                os.remove(caminho_arquivo)
 
-    messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
+
+        messagebox.showinfo("STATUS DE PROCESSAMENTO", "Processamento finalizado com sucesso!!!")
