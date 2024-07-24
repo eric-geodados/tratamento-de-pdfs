@@ -164,6 +164,7 @@ cython_debug/
 ### ARQUIVOS PARA IGNORAR E NÃO SUBIR NO GITHUB
 
 teste.py
+azure.py
 metadados.py
 1_pdfImagem/
 2_limiarizacao/

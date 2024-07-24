@@ -42,7 +42,9 @@ class Interface:
         self.pasta_saida.trace("w", self.desabilitador_botao)  # Monitora alterações no StringVar
     
 
-        ttk.Label(frame, text="PROCESSADOR DE PDFS", font=fonte_titulos, background=self.cor, foreground="white").grid(column=0, row=1, padx=10, pady=5, columnspan=4)
+        ttk.Label(frame, text="PROCESSADOR DE PDFS", font=fonte_titulos, background=self.cor, foreground="white").grid(column=0, row=0, padx=10, pady=5, columnspan=4)
+        ttk.Label(frame, text="―――"*29, font=(self.fonte, 8), background=self.cor, foreground="white").grid(column=0, row=1, padx=10, pady=5, columnspan=4)
+
 
         # Labels para mostrar os caminho da pasta de entrada
         ttk.Label(frame, text="Caminho de entrada:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=2, padx=10, pady=10, sticky="e")
@@ -100,6 +102,3 @@ class Interface:
     def processamento(self):
         # pdf_para_imagem_1.pdf_para_imagens(self.pasta_entrada.get(), self.pasta_saida.get())
         processamento_atualizado.Processamento(self.pasta_entrada.get(), self.pasta_saida.get())
-
-interface = Interface()
-interface.iniciar_interface()

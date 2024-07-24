@@ -42,3 +42,6 @@ def verificar_pdf_em_branco(caminho_pdf_entrada):
     if str_resultado == "":
         return False
     return True
+
+
+pdf_para_imagens(r'.\semTratamento', r'.\2_limiarizacao')

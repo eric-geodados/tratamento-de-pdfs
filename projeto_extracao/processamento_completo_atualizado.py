@@ -7,6 +7,8 @@ from tkinter import messagebox
 import cv2
 import numpy as np
 from PIL import Image
+from config import ENDPOINT, PREDICTION_KEY
+import requests
 
 
 class Processamento:    
@@ -46,9 +48,6 @@ class Processamento:
                     else:
                         os.remove(self.caminho_imagem_saida)
                         logging.warning('Página do PDF está em branco!')
-                    
-                # logging.info('PROCESSAMENTO FINALIZADO COM SUCESSO!')
-
         
 
     def verificar_pdf_em_branco(self):
@@ -59,15 +58,48 @@ class Processamento:
 
     
     # PROCESSO 2
+    def identificar_orientacao(self):
+        # Configurar os cabeçalhos da solicitação
+        headers = {
+            "Prediction-Key": PREDICTION_KEY,
+            "Content-Type": "application/octet-stream"
+        }
+
+        for nome_arquivo in os.listdir(self.pasta_pasta):
+            if nome_arquivo.endswith(".png"):
+                caminho_imagem = os.path.join(self.pasta_pasta, nome_arquivo)
+                nome_sem_extensao = Path(nome_arquivo).stem
+
+            # Ler o arquivo de imagem em modo binário
+            with open(caminho_imagem, "rb") as arquivo_imagem:
+                imagem_data = arquivo_imagem.read()
+
+            # Enviar a solicitação
+            response = requests.post(ENDPOINT, headers=headers, data=imagem_data)
+
+            # Verificar e exibir os resultados
+            if response.status_code == 200:
+                predicoes = response.json()["predictions"]
+                # Encontrar a predição com a maior probabilidade
+                melhor_predicao = max(predicoes, key=lambda p: p["probability"])
+                # print(f"Nome do arquivo: {nome_sem_extensao}, Tag: {melhor_predicao['tagName']}, Probability: {melhor_predicao['probability']*100:.2f}%")
+                
+            else:
+                print(f"Error: {response.status_code}, {response.text}")
+    
+    def rotacionar_imagens(self):
+        
+    
+    # PROCESSO 3
     # Função para ajustar o brilho da imagem
     def ajustar_brilho(self, imagem, alpha=1.5, beta=30):
-            imagem_array = np.array(imagem)
+        imagem_array = np.array(imagem)
 
-            imagem_array_ajustada = cv2.convertScaleAbs(imagem_array, alpha=alpha, beta=beta)
+        imagem_array_ajustada = cv2.convertScaleAbs(imagem_array, alpha=alpha, beta=beta)
 
-            imagem_ajustada = Image.fromarray(imagem_array_ajustada)
+        imagem_ajustada = Image.fromarray(imagem_array_ajustada)
 
-            return imagem_ajustada
+        return imagem_ajustada
 
     # Ajustar o brilho e borrões da imagem
     def aumentar_gradual_brilho(self):
@@ -93,7 +125,7 @@ class Processamento:
                 logging.info(f'Qualidade da imagem {nome_doc} alterada com sucesso!')
 
 
-    # PROCESSO 3
+    # PROCESSO 4
     def converter_imagens_para_pdf(self):
         if not os.path.exists(self.pasta_saida):
             os.makedirs(self.pasta_saida)

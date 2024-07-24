@@ -1,0 +1,2 @@
+ENDPOINT = "https://southcentralus.api.cognitive.microsoft.com/customvision/v3.0/Prediction/2f52a48e-2c9e-4e9d-90a7-ce99c8dac971/detect/iterations/SegundoTreinamento/image"
+PREDICTION_KEY = "243a93d9544a4a408f4a564154b2fdbb"
