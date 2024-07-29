@@ -77,35 +77,35 @@ class Processamento:
                 caminho_imagem = os.path.join(self.pasta_saida, nome_arquivo)
                 nome_sem_extensao = Path(nome_arquivo).stem
 
-            # Ler o arquivo de imagem em modo binário
-            with open(caminho_imagem, "rb") as arquivo_imagem:
-                imagem_data = arquivo_imagem.read()
+                # Ler o arquivo de imagem em modo binário
+                with open(caminho_imagem, "rb") as arquivo_imagem:
+                    imagem_data = arquivo_imagem.read()
 
-            # Enviar a solicitação
-            response = requests.post(ENDPOINT, headers=headers, data=imagem_data)
+                # Enviar a solicitação
+                response = requests.post(ENDPOINT, headers=headers, data=imagem_data)
 
-            # Verificar e exibir os resultados
-            if response.status_code == 200:
-                predicoes = response.json()["predictions"]
-                # Encontrar a predição com a maior probabilidade
-                melhor_predicao = max(predicoes, key=lambda p: p["probability"])
-                if melhor_predicao['tagName'] == '90 graus':
-                    graus = -90
-                elif melhor_predicao['tagName'] == '180 graus':
-                    graus = -180
-                elif melhor_predicao['tagName'] == '270 graus':
-                    graus = -270
-                print(graus)
-                self.rotacionar_imagens(caminho_imagem, self.pasta_entrada, nome_arquivo, graus)
-        else:
-            print(f"Error: {response.status_code}, {response.text}")
+                # Verificar e exibir os resultados
+                if response.status_code == 200:
+                    predicoes = response.json()["predictions"]
+                    # Encontrar a predição com a maior probabilidade
+                    melhor_predicao = max(predicoes, key=lambda p: p["probability"])
+                    if melhor_predicao['tagName'] == '90 graus':
+                        graus = -90
+                    elif melhor_predicao['tagName'] == '180 graus':
+                        graus = -180
+                    elif melhor_predicao['tagName'] == '270 graus':
+                        graus = -270
+                    print(graus)
+                    self.rotacionar_imagens(caminho_imagem, self.pasta_entrada, nome_arquivo, graus)
+            else:
+                print(f"Error: {response.status_code}, {response.text}")
 
-    def rotacionar_imagens(caminho_imagem, caminho_saida, nome_arq, graus):
+    def rotacionar_imagens(self, caminho_imagem, caminho_saida, nome_arq, graus=0):
         imagem = Image.open(caminho_imagem)
         
         imagem_rotacionada = imagem.rotate(graus, expand=True)
         
-        imagem_rotacionada.save(f'{caminho_saida}\{nome_arq}.png')
+        imagem_rotacionada.save(f'{caminho_saida}\{nome_arq}')
 
 
     # PROCESSO 3
