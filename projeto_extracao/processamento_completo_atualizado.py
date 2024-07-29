@@ -1,4 +1,5 @@
 from pdf2image import convert_from_path
+from PyPDF2 import PdfReader, PdfWriter
 import os
 from pathlib import Path
 import pytesseract
@@ -19,9 +20,15 @@ class Processamento:
         self.pasta_saida = pasta_saida
         
         # Executar as funções da classe
+        # Processo 1
         self.pdf_para_imagens()
+        # Processo 2
+        self.identificar_orientacao()
+        # Processo 3
         self.aumentar_gradual_brilho()
+        # Processo 4
         self.converter_imagens_para_pdf()
+        # Processo 5
         self.apagar_arquivos_indesejados()
 
     # PROCESSO 1
@@ -65,9 +72,9 @@ class Processamento:
             "Content-Type": "application/octet-stream"
         }
 
-        for nome_arquivo in os.listdir(self.pasta_pasta):
+        for nome_arquivo in os.listdir(self.pasta_saida):
             if nome_arquivo.endswith(".png"):
-                caminho_imagem = os.path.join(self.pasta_pasta, nome_arquivo)
+                caminho_imagem = os.path.join(self.pasta_saida, nome_arquivo)
                 nome_sem_extensao = Path(nome_arquivo).stem
 
             # Ler o arquivo de imagem em modo binário
@@ -82,14 +89,25 @@ class Processamento:
                 predicoes = response.json()["predictions"]
                 # Encontrar a predição com a maior probabilidade
                 melhor_predicao = max(predicoes, key=lambda p: p["probability"])
-                # print(f"Nome do arquivo: {nome_sem_extensao}, Tag: {melhor_predicao['tagName']}, Probability: {melhor_predicao['probability']*100:.2f}%")
-                
-            else:
-                print(f"Error: {response.status_code}, {response.text}")
-    
-    def rotacionar_imagens(self):
+                if melhor_predicao['tagName'] == '90 graus':
+                    graus = -90
+                elif melhor_predicao['tagName'] == '180 graus':
+                    graus = -180
+                elif melhor_predicao['tagName'] == '270 graus':
+                    graus = -270
+                print(graus)
+                self.rotacionar_imagens(caminho_imagem, self.pasta_entrada, nome_arquivo, graus)
+        else:
+            print(f"Error: {response.status_code}, {response.text}")
+
+    def rotacionar_imagens(caminho_imagem, caminho_saida, nome_arq, graus):
+        imagem = Image.open(caminho_imagem)
         
-    
+        imagem_rotacionada = imagem.rotate(graus, expand=True)
+        
+        imagem_rotacionada.save(f'{caminho_saida}\{nome_arq}.png')
+
+
     # PROCESSO 3
     # Função para ajustar o brilho da imagem
     def ajustar_brilho(self, imagem, alpha=1.5, beta=30):
@@ -109,15 +127,15 @@ class Processamento:
         if not os.path.exists(self.pasta_entrada):
             os.makedirs(self.pasta_entrada)
 
-        for nome_doc in os.listdir(self.pasta_saida):
+        for nome_doc in os.listdir(self.pasta_entrada):
             if nome_doc.endswith(".png"):
-                caminho_imagem = os.path.join(self.pasta_saida, nome_doc)
+                caminho_imagem = os.path.join(self.pasta_entrada, nome_doc)
 
                 imagem = Image.open(caminho_imagem)
 
                 imagem_ajustada = self.ajustar_brilho(imagem, alpha=1.1, beta=20)
 
-                caminho_saida = os.path.join(self.pasta_entrada, nome_doc)
+                caminho_saida = os.path.join(self.pasta_saida, nome_doc)
                 imagem_ajustada.save(caminho_saida)
                 imagem.close()
                 imagem_ajustada.close()
@@ -130,14 +148,14 @@ class Processamento:
         if not os.path.exists(self.pasta_saida):
             os.makedirs(self.pasta_saida)
 
-        for nome_arquivo in os.listdir(self.pasta_entrada):
+        for nome_arquivo in os.listdir(self.pasta_saida):
             if nome_arquivo.endswith(".png"):
-                caminho_imagem = os.path.join(self.pasta_entrada, nome_arquivo)
+                caminho_imagem = os.path.join(self.pasta_saida, nome_arquivo)
                 nome_sem_extensao = Path(nome_arquivo).stem
                 
                 pdf = pytesseract.image_to_pdf_or_hocr(caminho_imagem, extension='pdf')
                 
-                with open(os.path.join(self.pasta_saida, (f'{nome_sem_extensao}.pdf')), 'w+b') as f:
+                with open(os.path.join(self.pasta_entrada, (f'{nome_sem_extensao}.pdf')), 'w+b') as f:
                     f.write(pdf)
 
                 logging.info(f'Conversão de {nome_arquivo} para PDF feita com sucesso!')
@@ -145,10 +163,11 @@ class Processamento:
                 # Limpar os arquivos 
                 os.remove(caminho_imagem)
     
+    # PROCESSO 5
     def apagar_arquivos_indesejados(self):
-        for nome_arquivo in os.listdir(self.pasta_saida):
+        for nome_arquivo in os.listdir(self.pasta_entrada):
             if nome_arquivo.endswith(".png"):
-                caminho_arquivo = os.path.join(self.pasta_saida, nome_arquivo)
+                caminho_arquivo = os.path.join(self.pasta_entrada, nome_arquivo)
                 os.remove(caminho_arquivo)
 
 
