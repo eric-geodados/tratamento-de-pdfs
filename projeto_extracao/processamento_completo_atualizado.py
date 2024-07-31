@@ -55,7 +55,9 @@ class Processamento:
                     else:
                         os.remove(self.caminho_imagem_saida)
                         logging.warning('Página do PDF está em branco!')
-        
+            
+                os.remove(self.caminho_pdf_entrada)
+
 
     def verificar_pdf_em_branco(self):
         str_resultado = pytesseract.image_to_string(self.caminho_imagem_saida, lang='por')

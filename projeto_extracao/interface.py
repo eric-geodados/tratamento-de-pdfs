@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
-from tkinter import filedialog
+from tkinter import ttk, filedialog, scrolledtext
 import tkinter.font as tkFont
 import processamento_completo_atualizado as processamento_atualizado
 import utils
@@ -49,11 +48,11 @@ class Interface:
         # Labels para mostrar os caminho da pasta de entrada
         ttk.Label(frame, text="Caminho de entrada:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=2, padx=10, pady=10, sticky="e")
         ttk.Label(frame, textvariable=self.pasta_entrada, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=2, padx=10, pady=10)
-        
+
         # Labels para mostrar os caminho da pasta de saída
         ttk.Label(frame, text="Caminho de saída:", font=(self.fonte, 16), background=self.cor, foreground="white").grid(column=0, row=3, padx=10, pady=10, sticky="e")
         ttk.Label(frame, textvariable=self.pasta_saida, font=(self.fonte, 12), background="white", width=60).grid(column=1, row=3, padx=10, pady=10)
-        
+
         # Botões para abrir pastas
         ttk.Button(frame, text="Selecionar Pasta", command=self.abrir_pasta_entrada).grid(column=2, row=2, pady=10)
         ttk.Button(frame, text="Selecionar Pasta", command=self.abrir_pasta_saida).grid(column=2, row=3, pady=10)
@@ -66,6 +65,7 @@ class Interface:
         # Text widget para exibir o log
         self.log_texto = tk.Text(frame, state='disabled', height=5)
         self.log_texto.grid(column=0, row=5, sticky="ew", columnspan=4, pady=10)
+        
 
         # Configurar o logger
         self.texto_handler = utils.TextHandler(self.log_texto)
@@ -73,7 +73,6 @@ class Interface:
 
         # Créditos ao Desenvolvedor
         ttk.Label(frame, text="2024 © Desenvolvido por Eric Cabral", font=('Segoe UI', 10), background=self.cor, foreground="white").grid(column=0, row=6, padx=5, pady=10, sticky='w', columnspan=4)
-
 
         janela.mainloop()
       
